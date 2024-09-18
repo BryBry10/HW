@@ -1,82 +1,160 @@
+import javax.swing.*;
 import java.awt.EventQueue;
-import java.awt.event.ActionListener;
+import java.util.*;
+ 
+/**
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-
-
+* @author Bryan Martinez
+* @version 1.0
+* In the Scrabble App, a user will be able to input any word as long as it is seven 
+* letters. Once the user clicks the scrabble button, all the permutations for that 
+* word will be demonstrated.
+*/
 
 public class ScrabbleApp {
 
 	private JFrame frame;
-	private JTextField txtEnterWord;
-	private JButton txtButton;
-	private JTextArea txtOutput;
-
+	private JTextField txtInput;
+	private JTextArea textOutput;
+	private JButton btnScrabble;
+ 
 	/**
 	 * Launch the application.
+	 * @param args Unused.
 	 */
+
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ScrabbleApp window = new ScrabbleApp();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+
+		EventQueue.invokeLater(() -> {
+
+			try {
+				ScrabbleApp window = new ScrabbleApp();
+				window.frame.setVisible(true);
+			} catch (Exception e) {
+
+				e.printStackTrace();
 			}
 		});
 	}
-
+ 
 	/**
-	 * Create the application.
+	 * Constructor and GUI initialized.
+	 * @wbp.parser.entryPoint
 	 */
+
 	public ScrabbleApp() {
-		initialize();
-	}
 
+		initialize();
+
+	}
+ 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the frame and all of the components. (Labels, buttons, texts, etc)
 	 */
+
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+
+		frame = new JFrame("Scrabble Tile Permutations");
+		frame.setBounds(100, 100, 400, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		JLabel lblScrabbleApp = new JLabel("Scrabble App");
-		lblScrabbleApp.setHorizontalAlignment(SwingConstants.CENTER);
-		lblScrabbleApp.setBounds(0, 11, 434, 14);
-		frame.getContentPane().add(lblScrabbleApp);
-		
-		txtEnterWord = new JTextField();
-		txtEnterWord.setBounds(43, 91, 264, 20);
-		frame.getContentPane().add(txtEnterWord);
-		txtEnterWord.setColumns(10);
-		
-		JLabel lblNewLabel_1 = new JLabel("Enter Word:");
-		lblNewLabel_1.setBounds(43, 66, 67, 14);
-		frame.getContentPane().add(lblNewLabel_1);
-		
-		JButton btnButton = new JButton("Scrabble");
-		btnButton.setBounds(43, 138, 89, 23);
-		frame.getContentPane().add(btnButton);
-		
-		JTextArea textOutput = new JTextArea();
-		textOutput.setBounds(43, 172, 341, 62);
+		JLabel lblEnter = new JLabel("Enter 7 Scrabble tiles:");
+		lblEnter.setBounds(10, 44, 150, 25);
+		frame.getContentPane().add(lblEnter);
+		txtInput = new JTextField();
+		txtInput.setBounds(162, 44, 200, 25);
+		frame.getContentPane().add(txtInput);
+		txtInput.setColumns(10);
+		JButton btnScrabble = new JButton("Scrabble");
+		btnScrabble.setBounds(133, 105, 100, 25);
+		btnScrabble.addActionListener(e -> generatePermutations());
+		frame.getContentPane().add(btnScrabble);
+		textOutput = new JTextArea();
+		textOutput.setBounds(10, 141, 364, 97);
 		frame.getContentPane().add(textOutput);
-		
-		btnButton.addActionListener(new ActionListener() {
-			
-			
-		});
+
 	}
-	
-	
+ 
+	/**
+
+	 *Method used to create all of the permutations
+
+	 */
+
+	private void generatePermutations() {
+
+		String input = txtInput.getText().trim();
+
+		textOutput.setText("");
+ 
+		if (input.length() != 7) {
+			textOutput.setText("Error: Has to be exactly 7 leters.");
+			
+			return;
+
+		}
+
+		if (!input.matches("[a-zA-Z]+")) {
+			textOutput.setText("Error: Only alphabet letters eligible.");
+
+			return;
+		}
+ 
+		List<String> permutations = new ArrayList<>();
+		permute(input.toCharArray(), 0, permutations);
+		textOutput.append("Permutations:\n");
+
+		for (String perm : permutations) {
+			textOutput.append(perm + "\n");
+
+		}
+
+	}
+ 
+	/**
+	 * Recursively generate all permutations of a given character array.
+
+	 * @param arr     The character array to permute.
+	 * @param index   Index for recurssion.
+	 * @param results The list to hold all of the permutations.
+	 */
+
+	private void permute(char[] arr, int index, List<String> results) {
+
+		if (index == arr.length - 1) {
+			results.add(new String(arr));
+
+			return;
+		}
+
+		for (int i = index; i < arr.length; i++) {
+			swap(arr, i, index);
+			permute(arr, index + 1, results);
+			swap(arr, i, index);
+
+		}
+
+	}
+ 
+	/**
+
+	 * Swaps two elements in a character array.
+	 * @param arr The character array.
+	 * @param i   The first index.
+	 * @param j   The second index.
+
+	 */
+
+	private void swap(char[] arr, int i, int j) {
+
+		char temp = arr[i];
+
+		arr[i] = arr[j];
+
+		arr[j] = temp;
+
+	}
+
 }
+
+ 
